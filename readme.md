@@ -111,7 +111,7 @@ If manually adding the package, then be sure to run `composer update` to update 
 
 ## Alias Loader
 
-**Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
+> **Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
 
 The [`AliasLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/AliasLoader.php) is a trait that package developers might find useful to bind Facades and other service locators or classes into the application's autoloader space. In a sense this is what Laravel's Container does by type hinting interfaces in it's dependency injection. When the interface is called for it is mapped or aliased to a concrete implementation. Using this trait does something similar but outside of the application's container and instead using PHP's native [`class_alias`](http://php.net/class_alias) method.
 
@@ -182,7 +182,7 @@ return [
 
 ## Config Loader
 
-**Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
+> **Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
 
 The [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) is a trait that package developers might find useful to provide the old Laravel 4 namespaced configs back to Laravel 5. With the move to Laravel 5, the internal config loader was simplified to make use of a single level deep config structure. This made it difficult for package developers to provide publishable configs that were easy to load and also did not conflict with other local configs. Suggestions for work arounds included prefixing the files (e.g.: `config('vendor-package.foo')`) or combining all of the config variables into a single file (e.g.: `config('vendor.package.foo')`). These "solutions" felt more like hacks so the Esensi development team decided to bring the namespaced functionality (e.g.: `vendor/package::foo`) as a trait.
 
