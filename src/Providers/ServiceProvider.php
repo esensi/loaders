@@ -14,7 +14,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
  * @author daniel <dalabarge@emersonmedia.com>
  * @copyright 2014 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link http://www.emersonmedia.com
+ * @link https://www.emersonmedia.com
  */
 abstract class ServiceProvider extends BaseServiceProvider implements
     AliasLoaderContract,
