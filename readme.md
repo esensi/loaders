@@ -1,4 +1,4 @@
-## Esensi Model Traits Package
+## Esensi Loaders Traits Package
 
 [![Build Status](https://travis-ci.org/esensi/loaders.svg)](https://travis-ci.org/esensi/loaders)
 [![Total Downloads](https://poser.pugx.org/esensi/loaders/downloads.svg)](https://packagist.org/packages/esensi/loaders)
@@ -10,7 +10,7 @@ An [Esensi](https://github.com/esensi) package, coded by [Emerson Media](http://
 > **Want to work with us on great Laravel applications?**
 Email us at [careers@emersonmedia.com](http://emersonmedia.com/contact)
 
-The `Esensi/Loader` package is just one package that makes up [Esensi](https://github.com/esensi), a platform built on [Laravel](http://laravel.com). This package uses [PHP traits](http://culttt.com/2014/06/25/php-traits) to supplement Laravel's missing namespaced config and alias loaders. Laravel 4 used the same loader as translation and view services for config files. With Laravel 5 this loader did not support namespaced configs. This package fixes that up and also adds namespaced alias files for better package development. Using traits allows for a high-degree of code reusability and extensibility. While this package provides a reasonable base service provider, developers are free to mix and match traits into any class that needs to make use of namespaced loaders. Using contracts, developers can be confident that the code complies to a reliable interface and is properly unit tested. For more details on the inner workings of the traits please consult the generously documented source code.
+The `Esensi/Loader` package is just one package that makes up [Esensi](https://github.com/esensi), a platform built on [Laravel](http://laravel.com). Laravel 4 used the same loader as translation and view services for config files. With Laravel 5 this loader did not support namespaced configs. This package fixes that up and also adds namespaced alias files for better package development. This package uses [PHP traits](http://culttt.com/2014/06/25/php-traits) to supplement Laravel's missing namespaced config and alias loaders. Using traits allows for a high-degree of code reusability and extensibility. While this package provides a reasonable base service provider, developers are free to mix and match traits into any class that needs to make use of namespaced loaders. Using contracts, developers can be confident that the code complies to a reliable interface and is properly unit tested. For more details on the inner workings of the traits please consult the generously documented source code.
 
 > **Have a project in mind?**
 Email us at [sales@emersonmedia.com](http://emersonmedia.com/contact), or call 1.877.439.6665.
