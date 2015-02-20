@@ -39,7 +39,7 @@ abstract class ServiceProvider extends BaseServiceProvider implements
      *
      * @var string
      */
-    protected $namespace = 'esensi/loader';
+    protected $namespace = 'esensi/loaders';
 
     /**
      * Whether to publish the configs or not.
