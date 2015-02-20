@@ -1,6 +1,6 @@
 <?php namespace Esensi\Loaders\Traits;
 
-use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\AliasLoader as Loader;
 use InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
 
@@ -27,7 +27,7 @@ trait AliasLoader {
     public function loadAliasesFrom($path, $namespace, $key = 'aliases')
     {
         // Get the alias loader
-        $loader = AliasLoader::getInstance();
+        $loader = Loader::getInstance();
 
         // Wrapped in a try catch because Finder squawks when there is no directory
         try{

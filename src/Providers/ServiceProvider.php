@@ -4,7 +4,7 @@ use Esensi\Loaders\Contracts\AliasLoader as AliasLoaderContract;
 use Esensi\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
 use Esensi\Loaders\Traits\AliasLoader;
 use Esensi\Loaders\Traits\ConfigLoader;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**
  * Abtract service provider that makes use of the loader traits.
@@ -16,7 +16,7 @@ use Illuminate\Support\ServiceProvider;
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
  * @link http://www.emersonmedia.com
  */
-abstract class ServiceProvider extends ServiceProvider implements
+abstract class ServiceProvider extends BaseServiceProvider implements
     AliasLoaderContract,
     ConfigLoaderContract {
 
@@ -62,7 +62,7 @@ abstract class ServiceProvider extends ServiceProvider implements
         $this->loadConfigsFrom($path, $namespace, $this->publish);
 
         // Load the aliases from the config files
-        $path = config_path($namespace)
+        $path = config_path($namespace);
         $this->loadAliasesFrom($path, $namespace);
     }
 

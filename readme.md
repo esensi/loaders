@@ -60,6 +60,10 @@ If manually adding the package, then be sure to run `composer update` to update 
 
 ## Alias Loader
 
+The [`AliasLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/AliasLoader.php) is a trait that package developers might find useful to bind Facades and other service locators or classes into the application's autoloader space. In a sense this is what Laravel's Container does by type hinting interfaces in it's dependency injection. When the interface is called for it is mapped or aliased to a concrete implementation. Using this trait does something similar but outside of the application's container and instead using PHP's native [`class_alias`](http://php.net/class_alias) method.
+
+Using this trait allows for shortcuts to be made for any of the longer namespaced classes the package might use. It can also allow for developers to alias app namespaced classes (e.g.: `App\Foo\Bar`) that do not actually exist (or maybe not yet) to vendor package classes (e.g.: `Foo\Bar\Class`) that actually do. Having the aliases stored in a config file allows for developers to quickly swap out the aliased classes with different instances. It also makes it easy to just drop the alias if the app namespaced class does exist: aliases are effectively placeholders.
+
 
 ## Config Loader
 
