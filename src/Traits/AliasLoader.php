@@ -7,12 +7,12 @@ use Symfony\Component\Finder\Finder;
 /**
  * Trait implementation of AliasLoader interface.
  *
- * @package Esensi\Loader
+ * @package Esensi\Loaders
  * @author daniel <dalabarge@emersonmedia.com>
  * @copyright 2015 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link http://www.emersonmedia.com
- * @see Esensi\Loader\Contracts\AliasLoader
+ * @link https://www.emersonmedia.com
+ * @see Esensi\Loaders\Contracts\AliasLoader
  */
 trait AliasLoader {
 

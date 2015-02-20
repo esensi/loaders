@@ -10,7 +10,7 @@ use Symfony\Component\Finder\Finder;
  * @author daniel <dalabarge@emersonmedia.com>
  * @copyright 2015 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link http://www.emersonmedia.com
+ * @link https://www.emersonmedia.com
  * @see Esensi\Loaders\Contracts\ConfigLoader
  */
 trait ConfigLoader {
