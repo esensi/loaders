@@ -23,14 +23,14 @@ abstract class ServiceProvider extends BaseServiceProvider implements
     /**
      * Load namespaced aliases from the config files.
      *
-     * @see Esensi\Loaders\Traits\AliasLoader
+     * @see Esensi\Loaders\Contracts\AliasLoader
      */
     use AliasLoader;
 
     /**
      * Load namespaced config files.
      *
-     * @see Esensi\Loaders\Traits\ConfigLoader
+     * @see Esensi\Loaders\Contracts\ConfigLoader
      */
     use ConfigLoader;
 

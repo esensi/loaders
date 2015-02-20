@@ -30,6 +30,7 @@ Email us at [sales@emersonmedia.com](http://emersonmedia.com/contact), or call 1
 - **[Installation](#installation)**
 - **[Alias Loader](#alias-loader)**
 - **[Config Loader](#config-loader)**
+    - [Upgrading From Laravel 4](#upgrading-from-laravel-4)
 - **[Unit Testing](#unit-testing)**
     - [Running the Unit Tests](#running-the-unit-tests)
 - **[Contributing](#contributing)**
@@ -66,6 +67,52 @@ Using this trait allows for shortcuts to be made for any of the longer namespace
 
 
 ## Config Loader
+
+The [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) is a trait that package developers might find useful to provide the old Laravel 4 namespaced configs back to Laravel 5. With the move to Laravel 5, the internal config loader was simplified to make use of a single level deep config structure. This made it difficult for package developers to provide publishable configs that were easy to load and also did not conflict with other local configs. Suggestions for work arounds included prefixing the files (e.g.: `config('vendor-package.foo')`) or combining all of the config variables into a single file (e.g.: `config('vendor.package.foo')`). These "solutions" felt more like hacks so the Esensi development team decided to bring the namespaced functionality (e.g.: `vendor/package::foo`) as a trait.
+
+In order to provide the application with namespaced configs, simply use the `ConfigLoader` trait on any `ServiceProvider` class and call `loadConfigsFrom()` method from the `boot()` method of the class. By default this will make the configs found at the specified path available for publishing using `php artisan vendor:publish --tags="config"`. The trait will then cascade the published configs on top of the package's original configs and set them in Laravel 5's config repository. The new configs are then accessible via `config('vendor/package::foo')` just like they would have been in Laravel 4.
+
+```php
+<?php namespace App\Providers;
+
+use Esensi\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
+use Esensi\Loaders\Traits\ConfigLoader;
+use Illuminate\Support\ServiceProvider;
+
+class PackageServiceProvider extends ServiceProvider implements ConfigLoaderContract {
+
+    /**
+     * Load namespaced config files.
+     *
+     * @see Esensi\Loaders\Contracts\ConfigLoader
+     */
+    use ConfigLoader;
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->loadConfigsFrom(__DIR__ . '/../../config', 'vendor/package');
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+}
+```
+
+### Upgrading From Laravel 4
+
+For applications that are being upgraded from Laravel 4, simply move all the config files found under the Laravel 4 `app/config/packages/` folder to the new Laravel 5 `config/` folder such that `app/config/packages/vendor/package/foo.php` is now located at `config/vendor/package/foo.php`. Then create a service provider similar to above for each of the vendor packages or use the `ConfigLoader` trait on the `ConfigServiceProvider` that is part of Laravel 5's default application classes.
 
 
 ## Unit Testing
