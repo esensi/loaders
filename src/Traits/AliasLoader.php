@@ -29,6 +29,9 @@ trait AliasLoader {
         // Get the alias loader
         $loader = Loader::getInstance();
 
+        // Prepare key for config line
+        $key = ! is_null($key) ? '.' . $key : null;
+
         // Wrapped in a try catch because Finder squawks when there is no directory
         try{
 
@@ -37,8 +40,7 @@ trait AliasLoader {
             foreach($files as $file)
             {
                 // Construct the config line where aliases are defined
-                $filename = basename($file->getRealPath(), '.php');
-                $key = ! is_null($key) ? '.' . $key : null;
+                $filename = basename($file->getRealPath(), '.php');;
                 $line = $namespace . '::' . $filename . $key;
 
                 // Load each of the aliases

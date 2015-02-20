@@ -57,12 +57,12 @@ trait ConfigLoader {
             // Load the namespaced config files merging the
             // published configs with the vendor configs
             $files = Finder::create()->files()->name('*.php')->in($directory);
-            $files = $publish ? $files->append(array_keys($configs)) : $files;
+            $files = $publish ? Finder::create()->append(array_keys($configs))->append($files) : $files;
             foreach($files as $file)
             {
                 $filename = basename($file->getRealPath(), '.php');
                 $line = $namespace . '::' . $filename;
-                config([$line, require $file->getRealPath()]);
+                config()->set($line, require $file->getRealPath());
             }
 
         // Silently ignore Finder exceptions
