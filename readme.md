@@ -168,14 +168,30 @@ Just like the `config/app.php` file that comes with Laravel 5's default configur
 
 return [
 
-    // A shortcut alias for a namespaced class
-    'User' => 'App\Models\User',
+    /*
+    |--------------------------------------------------------------------------
+    | Application aliases
+    |--------------------------------------------------------------------------
+    |
+    | The following configuration options allow the developer to map shortcut
+    | and placeholder aliases to concrete classes. These aliases should be
+    | loaded by a service provider that uses the AliadLoader trait. If
+    | the app actually makes use of a class by the same name as an
+    | alias then simply comment out the alias here so that the
+    | real class may be used instead.
+    |
+    */
+    'aliases' => [
 
-    // A shortcut alias for a Facade or service locator
-    'Foo' => 'Vendor\Package\FooFacade',
+        // A shortcut alias for a namespaced class
+        'User' => 'App\Models\User',
 
-    // A placeholder alias for a missing class
-    'App\Foo\Bar' => 'Vendor\Package\Foo\Bar',
+        // A shortcut alias for a Facade or service locator
+        'Foo' => 'Vendor\Package\FooFacade',
+
+        // A placeholder alias for a missing class
+        'App\Foo\Bar' => 'Vendor\Package\Foo\Bar',
+    ]
 ];
 ```
 
@@ -184,7 +200,7 @@ return [
 
 > **Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
 
-The [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) is a trait that package developers might find useful to provide the old Laravel 4 namespaced configs back to Laravel 5. With the move to Laravel 5, the internal config loader was simplified to make use of a single level deep config structure. This made it difficult for package developers to provide publishable configs that were easy to load and also did not conflict with other local configs. Suggestions for work arounds included prefixing the files (e.g.: `config('vendor-package.foo')`) or combining all of the config variables into a single file (e.g.: `config('vendor.package.foo')`). These "solutions" felt more like hacks so the Esensi development team decided to bring the namespaced functionality (e.g.: `vendor/package::foo`) as a trait.
+The [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) is a trait that package developers might find useful to provide the old Laravel 4 namespaced configs back to Laravel 5. With the move to Laravel 5, the internal config loader was simplified to make use of a single level deep config structure. This made it difficult for package developers to provide publishable configs that were easy to load and also did not conflict with other local configs. Suggestions for work arounds included prefixing the files (e.g.: `config('vendor-package.foo')`) or combining all of the config variables into a single file (e.g.: `config('vendor.package.foo')`). These "solutions" felt more like hacks so the Esensi development team decided to bring the namespaced functionality (e.g.: `vendor/package::foo`) back as a trait.
 
 In order to provide the application with namespaced configs, simply use the `ConfigLoader` trait on any `ServiceProvider` class and call `loadConfigsFrom()` method from the `boot()` method of the class. By default this will make the configs found at the specified path available for publishing using `php artisan vendor:publish --tags="config"`. The trait will then cascade the published configs on top of the package's original configs and set them in Laravel 5's config repository. The new configs are then accessible via `config('vendor/package::foo')` just like they would have been in Laravel 4.
 
@@ -226,7 +242,7 @@ class PackageServiceProvider extends ServiceProvider implements ConfigLoaderCont
 }
 ```
 
-> **Pro Tip:** An optional third parameter of the `loadConfigsFrom()` method allows the package developer the option to turn on an off config publishing. An optional fourth parameter also allows for customization of the tag in which the configs will be published under. See the [`Esensi\Loaders\Contracts\ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Contracts/ConfigLoader.php) for more details.
+> **Pro Tip:** An optional third parameter of the `loadConfigsFrom()` method allows the package developer the option to turn on and off config publishing. An optional fourth parameter also allows for customization of the tag in which the configs will be published under. See the [`Esensi\Loaders\Contracts\ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Contracts/ConfigLoader.php) for more details.
 
 ### Upgrading From Laravel 4
 
