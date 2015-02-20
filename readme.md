@@ -21,6 +21,54 @@ Email us at [sales@emersonmedia.com](http://emersonmedia.com/contact), or call 1
 
 > **Notice:** This code is specifically designed to be compatible with the [Laravel Framework](http://laravel.com) and may not be compatible as a stand-alone dependency or as part of another framework.
 
+Getting started with these new traits is a simple matter of extending the abstract `ServiceProvider` class that comes with the `Esensi\Loader` package. This class already implements the two loader traits and is ready for quick customization. While the following example will get the job done, please consult the generously commented source code for more customization options:
+
+```php
+<?php namespace App\Providers;
+
+use Esensi\Loaders\Providers\ServiceProvider;
+
+class PackageServiceProvider extends ServiceProvider {
+
+    /**
+     * The namespace of the loaded config files.
+     *
+     * @var string
+     */
+    protected $namespace = 'esensi/core';
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $namespace = $this->getNamespace();
+
+        // Load the configs first
+        $this->loadConfigsFrom(__DIR__ . '/../../config', $namespace, $this->publish);
+
+        // Optionally use Laravel 5's methods for loading views and language files
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', $namespace);
+        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', $namespace);
+
+        // Optionally load custom aliases out of the configs
+        $this->loadAliasesFrom(config_path($namespace), $namespace);
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+
+}
+```
 
 
 ## Table of Contents
@@ -29,6 +77,7 @@ Email us at [sales@emersonmedia.com](http://emersonmedia.com/contact), or call 1
 
 - **[Installation](#installation)**
 - **[Alias Loader](#alias-loader)**
+    - [Example Alias File](#example-alias-file)
 - **[Config Loader](#config-loader)**
     - [Upgrading From Laravel 4](#upgrading-from-laravel-4)
 - **[Unit Testing](#unit-testing)**
@@ -59,14 +108,81 @@ Or manually it can be added to the `composer.json` file:
 If manually adding the package, then be sure to run `composer update` to update the dependencies.
 
 
+
 ## Alias Loader
+
+**Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
 
 The [`AliasLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/AliasLoader.php) is a trait that package developers might find useful to bind Facades and other service locators or classes into the application's autoloader space. In a sense this is what Laravel's Container does by type hinting interfaces in it's dependency injection. When the interface is called for it is mapped or aliased to a concrete implementation. Using this trait does something similar but outside of the application's container and instead using PHP's native [`class_alias`](http://php.net/class_alias) method.
 
-Using this trait allows for shortcuts to be made for any of the longer namespaced classes the package might use. It can also allow for developers to alias app namespaced classes (e.g.: `App\Foo\Bar`) that do not actually exist (or maybe not yet) to vendor package classes (e.g.: `Foo\Bar\Class`) that actually do. Having the aliases stored in a config file allows for developers to quickly swap out the aliased classes with different instances. It also makes it easy to just drop the alias if the app namespaced class does exist: aliases are effectively placeholders.
+This trait allows for shortcuts to be made for any of the longer namespaced classes the package might use. It can also allow for developers to alias app namespaced classes (e.g.: `App\Foo\Bar`) that do not actually exist (or maybe not yet) to vendor package classes (e.g.: `Foo\Bar\Class`) that actually do. Having the aliases stored in a config file allows for developers to quickly swap out the aliased classes with different instances. It also makes it easy to just drop the alias if the app namespaced class does exist: aliases are effectively placeholders.
+
+In order to provide the application with these aliases, simply use the `AliasLoader` trait on any `ServiceProvider` class and call `loadAliasesFrom()` method from the `boot()` method of the class. By default this will scan the specified path for config files and map the aliases to the classes set on the `aliases` configuration line. These aliases are then available for use within other classes of the application.
+
+```php
+<?php namespace App\Providers;
+
+use Esensi\Loaders\Contracts\AliasLoader as AliasLoaderContract;
+use Esensi\Loaders\Traits\AliasLoader;
+use Illuminate\Support\ServiceProvider;
+
+class PackageServiceProvider extends ServiceProvider implements AliasLoaderContract {
+
+    /**
+     * Load namespaced aliases from the config files.
+     *
+     * @see Esensi\Loaders\Contracts\AliasLoader
+     */
+    use AliasLoader;
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->loadAliasesFrom(config_path('vendor/package'), 'vendor/package');
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+}
+```
+
+> **Pro Tip:** An optional third parameter of the `loadAliasesFrom()` method allows for customization of the key in which the `aliases` map should be found. See the [`Esensi\Loaders\Contracts\AliasLoader`](https://github.com/esensi/loaders/blob/master/src/Contracts/AliasLoader.php) for more details.
+
+### Example Alias File
+
+Just like the `config/app.php` file that comes with Laravel 5's default configurations, an `aliases` key should be added to any config file that should register aliases. Below is an example configuration file:
+
+```php
+<?php
+
+return [
+
+    // A shortcut alias for a namespaced class
+    'User' => 'App\Models\User',
+
+    // A shortcut alias for a Facade or service locator
+    'Foo' => 'Vendor\Package\FooFacade',
+
+    // A placeholder alias for a missing class
+    'App\Foo\Bar' => 'Vendor\Package\Foo\Bar',
+];
+```
 
 
 ## Config Loader
+
+**Pro Tip:** This package includes an abstract `ServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\ServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/ServiceProvider.php) and customizing the `boot()` method.
 
 The [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) is a trait that package developers might find useful to provide the old Laravel 4 namespaced configs back to Laravel 5. With the move to Laravel 5, the internal config loader was simplified to make use of a single level deep config structure. This made it difficult for package developers to provide publishable configs that were easy to load and also did not conflict with other local configs. Suggestions for work arounds included prefixing the files (e.g.: `config('vendor-package.foo')`) or combining all of the config variables into a single file (e.g.: `config('vendor.package.foo')`). These "solutions" felt more like hacks so the Esensi development team decided to bring the namespaced functionality (e.g.: `vendor/package::foo`) as a trait.
 
@@ -110,9 +226,12 @@ class PackageServiceProvider extends ServiceProvider implements ConfigLoaderCont
 }
 ```
 
+> **Pro Tip:** An optional third parameter of the `loadConfigsFrom()` method allows the package developer the option to turn on an off config publishing. An optional fourth parameter also allows for customization of the tag in which the configs will be published under. See the [`Esensi\Loaders\Contracts\ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Contracts/ConfigLoader.php) for more details.
+
 ### Upgrading From Laravel 4
 
 For applications that are being upgraded from Laravel 4, simply move all the config files found under the Laravel 4 `app/config/packages/` folder to the new Laravel 5 `config/` folder such that `app/config/packages/vendor/package/foo.php` is now located at `config/vendor/package/foo.php`. Then create a service provider similar to above for each of the vendor packages or use the `ConfigLoader` trait on the `ConfigServiceProvider` that is part of Laravel 5's default application classes.
+
 
 
 ## Unit Testing
