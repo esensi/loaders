@@ -37,7 +37,7 @@ class PackageServiceProvider extends ServiceProvider {
      *
      * @var string
      */
-    protected $namespace = 'esensi/core';
+    protected $namespace = 'vendor/package';
 
     /**
      * Bootstrap the application events.
