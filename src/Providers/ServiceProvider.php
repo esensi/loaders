@@ -2,8 +2,10 @@
 
 use Esensi\Loaders\Contracts\AliasLoader as AliasLoaderContract;
 use Esensi\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
+use Esensi\Loaders\Contracts\ConfigPublisher as ConfigPublisherContract;
 use Esensi\Loaders\Traits\AliasLoader;
 use Esensi\Loaders\Traits\ConfigLoader;
+use Esensi\Loaders\Traits\ConfigPublisher;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**
@@ -11,14 +13,15 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
  * You can extend this service provider as a base for application services.
  *
  * @package Esensi\Loaders
- * @author daniel <dalabarge@emersonmedia.com>
- * @copyright 2014 Emerson Media LP
+ * @author daniel <daniel@emersonmedia.com>
+ * @copyright 2015 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
  * @link https://www.emersonmedia.com
  */
 abstract class ServiceProvider extends BaseServiceProvider implements
     AliasLoaderContract,
-    ConfigLoaderContract {
+    ConfigLoaderContract,
+    ConfigPublisherContract {
 
     /**
      * Load namespaced aliases from the config files.
@@ -35,11 +38,18 @@ abstract class ServiceProvider extends BaseServiceProvider implements
     use ConfigLoader;
 
     /**
+     * Publish namespaced config files.
+     *
+     * @see Esensi\Loaders\Contracts\ConfigPublisher
+     */
+    use ConfigPublisher;
+
+    /**
      * The namespace of the loaded config files.
      *
      * @var string
      */
-    protected $namespace = 'esensi/loaders';
+    protected $namespace = '';
 
     /**
      * Whether to publish the configs or not.
@@ -55,25 +65,25 @@ abstract class ServiceProvider extends BaseServiceProvider implements
      */
     public function boot()
     {
-        $namespace = $this->getNamespace();
-
         // Load configs files and publish them
         $path = __DIR__ . '/../../config';
-        $this->loadConfigsFrom($path, $namespace, $this->publish);
+        $this->loadConfigsFrom($path, $this->namespace, $this->publish);
 
         // Load the aliases from the config files
-        $path = config_path($namespace);
-        $this->loadAliasesFrom($path, $namespace);
+        $path = config_path($this->namespace);
+        $this->loadAliasesFrom($path, $this->namespace);
     }
 
     /**
-     * Get the namespace that the loader will use.
+     * Register any application services.
+     * This is provided here so we don't have to redeclare
+     * and empty one on a parent class if it is not needed.
      *
-     * @return string
+     * @return void
      */
-    public function getNamespace()
+    public function register()
     {
-        return $this->namespace;
+
     }
 
 }

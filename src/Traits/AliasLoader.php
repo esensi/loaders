@@ -8,7 +8,7 @@ use Symfony\Component\Finder\Finder;
  * Trait implementation of AliasLoader interface.
  *
  * @package Esensi\Loaders
- * @author daniel <dalabarge@emersonmedia.com>
+ * @author daniel <daniel@emersonmedia.com>
  * @copyright 2015 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
  * @link https://www.emersonmedia.com
@@ -40,7 +40,7 @@ trait AliasLoader {
             foreach($files as $file)
             {
                 // Construct the config line where aliases are defined
-                $filename = basename($file->getRealPath(), '.php');;
+                $filename = basename($file->getRealPath(), '.php');
                 $line = $namespace . '::' . $filename . $key;
 
                 // Load each of the aliases

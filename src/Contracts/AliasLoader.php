@@ -4,7 +4,7 @@
  * Namespaced Alias Loader Interface
  *
  * @package Esensi\Loaders
- * @author daniel <dalabarge@emersonmedia.com>
+ * @author daniel <daniel@emersonmedia.com>
  * @copyright 2015 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
  * @link https://www.emersonmedia.com

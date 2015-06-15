@@ -1,7 +1,7 @@
 {
     "name": "esensi/loaders",
     "description": "The missing package loaders for Esensi",
-    "keywords": ["emersonmedia", "esensi", "laravel", "loader", "provider", "config", "namespace", "alias", "trait"],
+    "keywords": ["emersonmedia", "esensi", "laravel", "loader", "provider", "config", "namespace", "alias", "trait", "yaml"],
     "authors": [
         {
             "name": "Emerson Media, LP.",
@@ -9,7 +9,7 @@
         },
         {
             "name": "Daniel LaBarge",
-            "email": "dalabarge@emersonmedia.com"
+            "email": "daniel@emersonmedia.com"
         }
     ],
     "license": "MIT",
@@ -17,7 +17,8 @@
         "php": ">=5.4.0",
         "illuminate/contracts": "~5.0.0",
         "illuminate/config": "~5.0.0",
-        "illuminate/support": "~5.0.0"
+        "illuminate/support": "~5.0.0",
+        "symfony/yaml": "~2.7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.*",

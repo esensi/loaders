@@ -2,30 +2,59 @@
 
 use InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Parser;
 
 /**
- * Trait implementation of ConfigLoader interface.
+ * Trait implementation of YamlLoader interface.
  *
  * @package Esensi\Loaders
  * @author daniel <daniel@emersonmedia.com>
  * @copyright 2015 Emerson Media LP
  * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
  * @link https://www.emersonmedia.com
- * @see Esensi\Loaders\Contracts\ConfigLoader
+ * @see Esensi\Loaders\Contracts\YamlLoader
  */
-trait ConfigLoader {
+trait YamlLoader {
 
     /**
-     * Load the configs from a path under a namespace.
+     * YAML Parser service.
+     *
+     * @var Symfony\Component\Yaml\Parser
+     */
+    protected $yaml;
+
+    /**
+     * Get the YAML parser service.
+     *
+     * @return Symfony\Component\Yaml\Parser
+     */
+    public function getYamlParser()
+    {
+        return $this->yaml ?: app('Symfony\Component\Yaml\Parser');
+    }
+
+    /**
+     * Set the YAML parser service.
+     *
+     * @param Symfony\Component\Yaml\Parser $parser
+     * @return void
+     */
+    public function setYamlParser(Parser $parser)
+    {
+        $this->yaml = $parser;
+    }
+
+    /**
+     * Load the YAML from a path under a namespace.
      * Also optionally makes them available for publishing.
      *
      * @param string $path
      * @param string $namespace (optional)
-     * @param boolean $publish (optional) configs
+     * @param boolean $publish (optional) YAML configs
      * @param string $tag (optional) to use for artisan vendor:publish
      * @return void
      */
-    public function loadConfigsFrom($path, $namespace = null, $publish = true, $tag = 'config')
+    public function loadYamlFrom($path, $namespace = null, $publish = true, $tag = 'config')
     {
         // Wrapped in a try catch because Finder squawks when there is no directory
         try{
@@ -39,7 +68,7 @@ trait ConfigLoader {
 
             // Get the local package files which can be published.
             // These should be loaded no matter if they are not published.
-            $finder = Finder::create()->files()->name('*.php')->in($path);
+            $finder = Finder::create()->files()->name('*.yml')->in($path);
 
             // Enable artisan vendor::publish command support.
             if( $publish )
@@ -49,14 +78,14 @@ trait ConfigLoader {
                     throw new InvalidArgumentException('The publish argument is not usable without an implemented ConfigPublisher interface. Try using ConfigPublisher trait on the ' . $this::classname . ' class.');
                 }
 
-                // Get the configs that need to be published
+                // Get the YAML configs that need to be published
                 $configs = $this->publishConfigsTo($finder, $directory, $tag);
             }
 
             // Append any published namespaced config files
             if( $publish && is_dir($directory) )
             {
-                $files = Finder::create()->files()->name('*.php')->in($directory);
+                $files = Finder::create()->files()->name('*.yml')->in($directory);
                 $finder->append($files);
             }
 
@@ -64,11 +93,14 @@ trait ConfigLoader {
             foreach($finder as $file)
             {
                 // Get the key from the file name
-                $key = snake_case(basename($file->getRealPath(), '.php'));
+                $key = snake_case(basename($file->getRealPath(), '.yml'));
                 $line = $namespace ? $namespace . '::' . $key : $key;
 
-                // Set the config with the loaded config
-                config()->set($line, require $file->getRealPath());
+                // Get the YAML contents from the file
+                $contents = $file->getContents();
+
+                // Set the config with the loaded YAML config
+                config()->set($line, $this->getYamlParser()->parse($contents));
             }
 
         // Silently ignore Finder exceptions

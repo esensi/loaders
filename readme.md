@@ -10,7 +10,7 @@ The `Esensi\Loaders` package is just one package that makes up [Emerson Media](h
 > **Want to work with us on great Laravel applications?**
 Email us at [careers@emersonmedia.com](https://www.emersonmedia.com/contact)
 
-Laravel 4 used the same loader for translations, view services, and config files. In Laravel 5, the loader stopped supporting namespaced configs. This package fixes that up, and also adds namespaced alias files for better package development.
+Laravel 4 used the same loader for translations, view services, and config files. In Laravel 5, the loader stopped supporting namespaced configs. This package fixes that up, and also adds namespaced alias files for better package development and YAML config parsing for those who prefer that format.
 
 Esensi/Loaders uses [PHP traits](http://culttt.com/2014/06/25/php-traits) to supplement Laravel's missing namespaced config and alias loaders. Using traits allows for a high-degree of code reusability and extensibility. While this package provides a reasonable base service provider, developers are free to mix and match traits into any class that needs to make use of namespaced loaders. Using contracts, developers can be confident that the code complies to a reliable interface. (For more details on the inner workings of these traits please review the generously commented source code!)
 
@@ -59,16 +59,6 @@ class PackageServiceProvider extends ServiceProvider {
         $this->loadAliasesFrom(config_path($namespace), $namespace);
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
-    }
-
 }
 ```
 
@@ -80,6 +70,7 @@ class PackageServiceProvider extends ServiceProvider {
 - **[Installation](#installation)**
 - **[Config Loader](#config-loader)**
     - [Upgrading From Laravel 4](#upgrading-from-laravel-4)
+- **[YAML Loader](#yaml-loader)**
 - **[Alias Loader](#alias-loader)**
     - [Example Alias File](#example-alias-file)
 - **[Unit Testing](#unit-testing)**
@@ -117,7 +108,7 @@ If manually adding the package, then be sure to run `composer update` to update 
 
 The [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) is a trait that package developers might find useful to provide the old Laravel 4 namespaced configs back to Laravel 5. With the move to Laravel 5, the internal config loader was simplified to make use of a single level deep config structure. This made it difficult for package developers to provide publishable configs that were easy to load and also did not conflict with other local configs. Suggestions for work arounds included prefixing the files (e.g.: `config('vendor-package.foo')`) or combining all of the config variables into a single file (e.g.: `config('vendor.package.foo')`). The Esensi development team was happy enough with the old way of it, so we decided to bring back the namespaced functionality (e.g.: `vendor/package::foo`) as a trait.
 
-In order to provide the application with namespaced configs, simply use the `ConfigLoader` trait on any `ServiceProvider` class and call `loadConfigsFrom()` method from the `boot()` method of the class. By default this will make the configs found at the specified path available for publishing using `php artisan vendor:publish --tags="config"`. The trait will then cascade the published configs on top of the package's original configs and set them in Laravel 5's config repository. The new configs are then accessible via `config('vendor/package::foo')` just like they would have been in Laravel 4.
+In order to provide the application with namespaced configs, simply use the `ConfigLoader` trait on any `ServiceProvider` class and call `loadConfigsFrom()` method from the `boot()` method of the class. By default this will make the configs found at the specified path available for publishing using `php artisan vendor:publish --tags="config"` (requires additional [`ConfigPublisher`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigPublisher.php) trait). The trait will then cascade the published configs on top of the package's original configs and set them in Laravel 5's config repository. The new configs are then accessible via `config('vendor/package::foo')` just like they would have been in Laravel 4.
 
 ```php
 <?php namespace App\Providers;
@@ -157,13 +148,58 @@ class PackageServiceProvider extends ServiceProvider implements ConfigLoaderCont
 }
 ```
 
-> **Pro Tip:** An optional third parameter of the `loadConfigsFrom()` method allows the package developer the option to turn on and off config publishing. An optional fourth parameter also allows for customization of the tag in which the configs will be published under. See the [`Esensi\Loaders\Contracts\ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Contracts/ConfigLoader.php) for more details.
+> **Pro Tip:** When used with [`ConfigPublisher`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigPublisher.php) trait, an optional third parameter of the `loadConfigsFrom()` method allows the package developer the option to turn on and off config publishing. An optional fourth parameter also allows for customization of the tag in which the configs will be published under. See the [`Esensi\Loaders\Contracts\ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Contracts/ConfigLoader.php) for more details.
 
 ### Upgrading From Laravel 4
 
 For applications that are being upgraded from Laravel 4, simply move all the config files found under the Laravel 4 `app/config/packages/` folder to the new Laravel 5 `config/` folder such that `app/config/packages/vendor/package/foo.php` is now located at `config/vendor/package/foo.php`. Then create a service provider similar to above for each of the vendor packages or use the `ConfigLoader` trait on the `ConfigServiceProvider` that is part of Laravel 5's default application classes.
 
 
+## YAML Loader
+
+> **Pro Tip:** This package includes an abstract `YamlServiceProvider` that makes use of this trait. Package developers should consider extending the [`Esensi\Loaders\Providers\YamlServiceProvider`](https://github.com/esensi/loaders/blob/master/src/Providers/YamlServiceProvider.php) and customizing the `boot()` method.
+
+The [`YamlLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/YamlLoader.php) is a trait that is very similar to the [`ConfigLoader`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigLoader.php) except that instead of parsing PHP config files it parses YAML config files. Package developers who prefer to use the YAML format for configuring their packages can use this trait to load all of their YAML config files in Laravel's config repository. Additionally it can be mixed with [`ConfigPublisher`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigPublisher.php) to make publishing of the package's YAML configs to the namespaced config path of the Laravel project.
+
+In order to provide the application with namespaced YAML configs, simply use the `YamlLoader` trait on any `ServiceProvider` class and call `loadYamlFrom()` method from the `boot()` method of the class. By default this will make the YAML found at the specified path available for publishing using `php artisan vendor:publish --tags="config"` (requires additional [`ConfigPublisher`](https://github.com/esensi/loaders/blob/master/src/Traits/ConfigPublisher.php) trait). The trait will then cascade the published configs on top of the package's original configs and set them in Laravel 5's config repository. The new configs are then accessible via `config('vendor/package::foo')` just like they would have been in Laravel 4.
+
+```php
+<?php namespace App\Providers;
+
+use Esensi\Loaders\Contracts\YamlLoader as YamlLoaderContract;
+use Esensi\Loaders\Traits\YamlLoader;
+use Illuminate\Support\ServiceProvider;
+
+class PackageServiceProvider extends ServiceProvider implements YamlLoaderContract {
+
+    /**
+     * Load namespaced YAML files.
+     *
+     * @see Esensi\Loaders\Contracts\YamlLoader
+     */
+    use YamlLoader;
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->loadYamlFrom(__DIR__ . '/../../config', 'vendor/package');
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+}
+```
 
 ## Alias Loader
 
