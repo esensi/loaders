@@ -54,7 +54,7 @@ trait YamlLoader {
      * @param string $tag (optional) to use for artisan vendor:publish
      * @return void
      */
-    public function loadYamlFrom($path, $namespace = null, $publish = true, $tag = 'config')
+    public function loadYamlFrom($path, $namespace = null, $publish = true, $tag = 'yaml')
     {
         // Wrapped in a try catch because Finder squawks when there is no directory
         try{
