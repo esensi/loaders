@@ -68,7 +68,7 @@ trait YamlLoader {
 
             // Get the local package files which can be published.
             // These should be loaded no matter if they are not published.
-            $finder = Finder::create()->files()->name('*.yml|*.yaml')->in($path);
+            $finder = Finder::create()->files()->name('*.yml')->name('*.yaml')->in($path);
 
             // Enable artisan vendor::publish command support.
             if( $publish )
@@ -85,7 +85,7 @@ trait YamlLoader {
             // Append any published namespaced config files
             if( $publish && is_dir($directory) )
             {
-                $files = Finder::create()->files()->name('*.yml|*.yaml')->in($directory);
+                $files = Finder::create()->files()->name('*.yml')->name('*.yaml')->in($directory);
                 $finder->append($files);
             }
 
@@ -93,7 +93,7 @@ trait YamlLoader {
             foreach($finder as $file)
             {
                 // Get the key from the file name
-                $key = snake_case(basename($file->getRealPath(), $file->getExtension()));
+                $key = snake_case(basename($file->getRealPath(), '.' . $file->getExtension()));
                 $line = $namespace ? $namespace . '::' . $key : $key;
 
                 // Get the YAML contents from the file
