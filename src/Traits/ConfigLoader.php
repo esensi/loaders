@@ -27,6 +27,12 @@ trait ConfigLoader {
      */
     public function loadConfigsFrom($path, $namespace = null, $publish = true, $tag = 'config')
     {
+        // Use the cached configs when available
+        if( $this->app->configurationIsCached() )
+        {
+            return;
+        }
+
         // Wrapped in a try catch because Finder squawks when there is no directory
         try{
 

@@ -29,6 +29,28 @@ trait AliasLoader {
         // Get the alias loader
         $loader = Loader::getInstance();
 
+        // Use the cached aliases when available
+        if( $this->app->configurationIsCached() )
+        {
+            foreach(config('esensi') as $namespace => $files)
+            {
+                foreach($files as $filename => $config)
+                {
+                    // Load each of the aliases
+                    $aliases = ! is_null($key) && $filename == $key ? $config : array_get($config, $key, []);
+                    foreach( $aliases as $alias => $class )
+                    {
+                        // Only apply alias if alias is needed
+                        if( ! class_exists($alias) )
+                        {
+                            $loader->alias($alias, $class);
+                        }
+                    }
+                }
+            }
+            return;
+        }
+
         // Prepare key for config line
         $key = ! is_null($key) ? '.' . $key : null;
 
@@ -45,7 +67,7 @@ trait AliasLoader {
 
                 // Load each of the aliases
                 $aliases = config($line, []);
-                foreach( $aliases as $alias => $class)
+                foreach( $aliases as $alias => $class )
                 {
                     // Only apply alias if alias is needed
                     if( ! class_exists($alias) )
