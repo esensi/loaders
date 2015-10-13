@@ -47,7 +47,11 @@ trait AliasLoader {
                 $aliases = config($line, []);
                 foreach( $aliases as $alias => $class)
                 {
-                    $loader->alias($alias, $class);
+                    // Only apply alias if alias is needed
+                    if( ! class_exists($alias) )
+                    {
+                        $loader->alias($alias, $class);
+                    }
                 }
             }
 
