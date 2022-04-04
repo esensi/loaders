@@ -6,12 +6,6 @@ use Symfony\Component\Finder\Finder;
 /**
  * Trait implementation of ConfigLoader interface.
  *
- * @package Esensi\Loaders
- * @author daniel <daniel@emersonmedia.com>
- * @copyright 2015 Emerson Media LP
- * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link https://www.emersonmedia.com
- * @see Esensi\Loaders\Contracts\ConfigLoader
  */
 trait ConfigLoader {
 
@@ -19,16 +13,21 @@ trait ConfigLoader {
      * Load the configs from a path under a namespace.
      * Also optionally makes them available for publishing.
      *
-     * @param string $path
-     * @param string $namespace (optional)
-     * @param boolean $publish (optional) configs
-     * @param string $tag (optional) to use for artisan vendor:publish
+     * @param  string  $path
+     * @param  string  $namespace (optional)
+     * @param  boolean  $publish (optional) configs
+     * @param  string  $tag (optional) to use for artisan vendor:publish
      * @return void
      */
     public function loadConfigsFrom($path, $namespace = null, $publish = true, $tag = 'config')
     {
+        // Use the cached configs when available
+        if ($this->app->configurationIsCached()) {
+            return;
+        }
+
         // Wrapped in a try catch because Finder squawks when there is no directory
-        try{
+        try {
 
             // This directory is used both as the destination
             // for publishing configs and as the first path
@@ -42,10 +41,8 @@ trait ConfigLoader {
             $finder = Finder::create()->files()->name('*.php')->in($path);
 
             // Enable artisan vendor::publish command support.
-            if( $publish )
-            {
-                if( ! method_exists($this, 'publishConfigsTo') )
-                {
+            if ($publish) {
+                if (! method_exists($this, 'publishConfigsTo')) {
                     throw new InvalidArgumentException('The publish argument is not usable without an implemented ConfigPublisher interface. Try using ConfigPublisher trait on the ' . $this::classname . ' class.');
                 }
 
@@ -54,15 +51,13 @@ trait ConfigLoader {
             }
 
             // Append any published namespaced config files
-            if( $publish && is_dir($directory) )
-            {
+            if ($publish && is_dir($directory)) {
                 $files = Finder::create()->files()->name('*.php')->in($directory);
                 $finder->append($files);
             }
 
             // Load each of the configs into the namespace
-            foreach($finder as $file)
-            {
+            foreach ($finder as $file) {
                 // Get the key from the file name
                 $key = snake_case(basename($file->getRealPath(), '.php'));
                 $line = $namespace ? $namespace . '::' . $key : $key;
@@ -72,7 +67,7 @@ trait ConfigLoader {
             }
 
         // Silently ignore Finder exceptions
-        } catch( InvalidArgumentException $e){}
+        } catch (InvalidArgumentException $e) {}
     }
 
 }
