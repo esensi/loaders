@@ -12,11 +12,6 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
  * Abtract service provider that makes use of the loader traits.
  * You can extend this service provider as a base for application services.
  *
- * @package Esensi\Loaders
- * @author daniel <daniel@emersonmedia.com>
- * @copyright 2015 Emerson Media LP
- * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link https://www.emersonmedia.com
  */
 abstract class ServiceProvider extends BaseServiceProvider implements
     AliasLoaderContract,
@@ -65,11 +60,11 @@ abstract class ServiceProvider extends BaseServiceProvider implements
      */
     public function boot()
     {
-        // Load configs files and publish them
+        // Load configs from files
         $path = __DIR__ . '/../../config';
         $this->loadConfigsFrom($path, $this->namespace, $this->publish);
 
-        // Load the aliases from the config files
+        // Load the aliases from the config
         $path = config_path($this->namespace);
         $this->loadAliasesFrom($path, $this->namespace);
     }

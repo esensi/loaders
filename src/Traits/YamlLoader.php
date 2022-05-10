@@ -7,12 +7,6 @@ use Symfony\Component\Yaml\Parser;
 /**
  * Trait implementation of YamlLoader interface.
  *
- * @package Esensi\Loaders
- * @author daniel <daniel@emersonmedia.com>
- * @copyright 2015 Emerson Media LP
- * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link https://www.emersonmedia.com
- * @see Esensi\Loaders\Contracts\YamlLoader
  */
 trait YamlLoader {
 
@@ -36,7 +30,7 @@ trait YamlLoader {
     /**
      * Set the YAML parser service.
      *
-     * @param Symfony\Component\Yaml\Parser $parser
+     * @param  Symfony\Component\Yaml\Parser  $parser
      * @return void
      */
     public function setYamlParser(Parser $parser)
@@ -48,16 +42,16 @@ trait YamlLoader {
      * Load the YAML from a path under a namespace.
      * Also optionally makes them available for publishing.
      *
-     * @param string $path
-     * @param string $namespace (optional)
-     * @param boolean $publish (optional) YAML configs
-     * @param string $tag (optional) to use for artisan vendor:publish
+     * @param  string  $path
+     * @param  string  $namespace (optional)
+     * @param  boolean  $publish (optional) YAML configs
+     * @param  string  $tag (optional) to use for artisan vendor:publish
      * @return void
      */
     public function loadYamlFrom($path, $namespace = null, $publish = true, $tag = 'yaml')
     {
         // Wrapped in a try catch because Finder squawks when there is no directory
-        try{
+        try {
 
             // This directory is used both as the destination
             // for publishing configs and as the first path
@@ -71,10 +65,8 @@ trait YamlLoader {
             $finder = Finder::create()->files()->name('*.yml')->name('*.yaml')->in($path);
 
             // Enable artisan vendor::publish command support.
-            if( $publish )
-            {
-                if( ! method_exists($this, 'publishConfigsTo') )
-                {
+            if ($publish) {
+                if (! method_exists($this, 'publishConfigsTo')) {
                     throw new InvalidArgumentException('The publish argument is not usable without an implemented ConfigPublisher interface. Try using ConfigPublisher trait on the ' . $this::classname . ' class.');
                 }
 
@@ -83,15 +75,13 @@ trait YamlLoader {
             }
 
             // Append any published namespaced config files
-            if( $publish && is_dir($directory) )
-            {
+            if ($publish && is_dir($directory)) {
                 $files = Finder::create()->files()->name('*.yml')->name('*.yaml')->in($directory);
                 $finder->append($files);
             }
 
             // Load each of the configs into the namespace
-            foreach($finder as $file)
-            {
+            foreach ($finder as $file) {
                 // Get the key from the file name
                 $key = snake_case(basename($file->getRealPath(), '.' . $file->getExtension()));
                 $line = $namespace ? $namespace . '::' . $key : $key;
@@ -104,7 +94,7 @@ trait YamlLoader {
             }
 
         // Silently ignore Finder exceptions
-        } catch( InvalidArgumentException $e){}
+        } catch (InvalidArgumentException $e) {}
     }
 
 }

@@ -8,12 +8,6 @@ use Esensi\Loaders\Traits\YamlLoader;
  * Abtract service provider that makes use of the loader traits.
  * You can extend this service provider as a base for application services.
  *
- * @package Esensi\Loaders
- * @author daniel <daniel@emersonmedia.com>
- * @copyright 2015 Emerson Media LP
- * @license https://github.com/esensi/loaders/blob/master/LICENSE.txt MIT License
- * @link https://www.emersonmedia.com
- * @see Esensi\Loaders\Providers\ServiceProvider
  */
 abstract class YamlServiceProvider extends ServiceProvider implements
     YamlLoaderContract {
