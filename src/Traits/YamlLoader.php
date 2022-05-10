@@ -94,7 +94,7 @@ trait YamlLoader {
             }
 
         // Silently ignore Finder exceptions
-        } catch ( InvalidArgumentException $e) {}
+        } catch (InvalidArgumentException $e) {}
     }
 
 }

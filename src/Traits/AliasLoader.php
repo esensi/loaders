@@ -41,7 +41,7 @@ trait AliasLoader {
         }
 
         // Prepare key for config line
-        $key = ! is_null($key) ? '.' . $key : null;
+        $key = !is_null($key) ? '.' . $key : null;
 
         // Wrapped in a try catch because Finder squawks when there is no directory
         try {
