@@ -1,6 +1,6 @@
 ## Esensi Loaders Traits Package
 
-> Version 1
+> Version 2
 
 An [Esensi\Loaders] package, coded by [SiteRocket Labs®](https://www.siterocket.com).
 
