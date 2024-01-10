@@ -1,6 +1,6 @@
 ## Esensi Loaders Traits Package
 
-> Version 1
+> Version 4
 
 An [Esensi\Loaders] package, coded by [SiteRocket Labs®](https://www.siterocket.com).
 
@@ -8,7 +8,7 @@ Esensi/Loaders uses [PHP traits](http://culttt.com/2014/06/25/php-traits) to sup
 
 ## Note
 
-This `Esensi/Activity` is specifically designed to be compatible with the [Laravel Framework](https://laravel.com) and may not be compatible as a stand-alone dependency or as part of another framework.
+This `Esensi/Loaders` is specifically designed to be compatible with the [Laravel Framework ^10](https://laravel.com) and may not be compatible as a stand-alone dependency or as part of another framework.
 
 ## Quick Start
 
